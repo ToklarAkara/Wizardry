@@ -3,8 +3,8 @@ package electroblob.wizardry.packet;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellProperties;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+
+
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -18,10 +18,16 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 	@Override
 	public IMessage onMessage(Message message, MessageContext ctx){
 
+
+
+		// Just to make sure that the side is correct
 		if(ctx.side.isClient()){
+
 			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> {
-				for(SpellProperties properties : message.propertiesArray){
-					properties.getSpell().setPropertiesClient(properties);
+				for(int i=0; i<message.propertiesArray.length; i++){
+					Spell.byNetworkID(i).setPropertiesClient(message.propertiesArray[i]);
+
+
 				}
 			});
 		}
@@ -33,6 +39,11 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 
 		private SpellProperties[] propertiesArray;
 
+
+
+		// This constructor is required otherwise you'll get errors (used somewhere in fml through reflection)
+
+
 		public Message(){}
 
 		public Message(SpellProperties... properties){
@@ -41,12 +52,16 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 
 		@Override
 		public void fromBytes(ByteBuf buf){
+
+
+
 			List<SpellProperties> propertiesList = new ArrayList<>();
+			int i = 0;
 
 			while(buf.isReadable()){
-				String name = ByteBufUtils.readUTF8String(buf);
-				Spell spell = Spell.registry.getValue(new ResourceLocation(name));
-				propertiesList.add(new SpellProperties(spell, buf));
+				propertiesList.add(new SpellProperties(Spell.byNetworkID(i++), buf));
+
+
 			}
 
 			propertiesArray = propertiesList.toArray(new SpellProperties[0]);
@@ -54,11 +69,11 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 
 		@Override
 		public void toBytes(ByteBuf buf){
-			for(SpellProperties properties : propertiesArray){
-				ResourceLocation name = properties.getSpell().getRegistryName();
-				ByteBufUtils.writeUTF8String(buf, name.toString());
-				properties.write(buf);
-			}
+
+
+			for(SpellProperties properties : propertiesArray) properties.write(buf);
 		}
 	}
 }
+
+
