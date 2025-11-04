@@ -101,7 +101,9 @@ public final class SpellProperties {
 	 * @param spell The spell that this {@code SpellProperties} object is for.
 	 * @throws JsonSyntaxException if at any point the JSON object is found to be invalid.
 	 */
+
 	private SpellProperties(JsonObject json, Spell spell){
+
 
 		String[] baseValueNames = spell.getPropertyKeys();
 
@@ -165,6 +167,7 @@ public final class SpellProperties {
 
 	/** Constructs a new SpellProperties object for the given spell, reading its values from the given ByteBuf. */
 	public SpellProperties(Spell spell, ByteBuf buf){
+
 
 		enabledContexts = new EnumMap<>(Context.class);
 		baseValues = new HashMap<>();
@@ -436,6 +439,8 @@ public final class SpellProperties {
 
 		return success;
 	}
+
+
 
 }
 

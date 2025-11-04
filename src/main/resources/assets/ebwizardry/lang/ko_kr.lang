@@ -1,3 +1,4 @@
+
 # PARSE_ESCAPES
 tile.ebwizardry\:arcane_workbench.name=신비로운 작업대
 tile.ebwizardry\:crystal_ore.name=마법수정 원석
@@ -1774,5 +1775,6 @@ spell.ebwizardry\:magic_missile_festive=마법의 겨우살이
 spell.ebwizardry\:summon_snow_golem_festive=얼어붙는 눈골렘 소환
 spell.ebwizardry\:invigorating_presence_festive=최상의 기량
 spell.ebwizardry\:empowering_presence_festive=마법의 한계
+
 
 wizard.debug=%1$s, %2$s, %3$s
