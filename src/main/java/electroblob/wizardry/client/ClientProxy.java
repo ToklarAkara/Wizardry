@@ -630,23 +630,24 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleGlyphDataPacket(PacketGlyphData.Message message){
 
-		SpellGlyphData data = SpellGlyphData.get(Minecraft.getMinecraft().world);
+	    SpellGlyphData data = SpellGlyphData.get(Minecraft.getMinecraft().world);
 
-		data.randomNames = new HashMap<>();
-		data.randomDescriptions = new HashMap<>();
+	    data.randomNames = new HashMap<>();
+	    data.randomDescriptions = new HashMap<>();
 
-		for(Spell spell : Spell.getAllSpells()){
+	    // Iterate over the glyph entries carried in the packet
+	    for(PacketGlyphData.GlyphEntry entry : message.glyphs){
 
-			if(spell.networkID() > message.names.size()){
-				Wizardry.logger.warn("Received no glyph data for spell {}, skipping", spell.getRegistryName());
-				continue;
-			}
+	        Spell spell = Spell.registry.getValue(new ResourceLocation(entry.spellName));
+	        if(spell == null){
+	            Wizardry.logger.warn("Unknown spell {} in glyph packet, skipping", entry.spellName);
+	            continue;
+	        }
 
-			// -1 because the none spell isn't included
-			// This is a case where we must use the network ID, not the metadata
-			data.randomNames.put(spell, message.names.get(spell.networkID() - 1));
-			data.randomDescriptions.put(spell, message.descriptions.get(spell.networkID() - 1));
-		}
+	        // Populate the maps directly from the entry
+	        data.randomNames.put(spell, entry.glyphName);
+	        data.randomDescriptions.put(spell, entry.glyphDesc);
+	    }
 	}
 
 	@Override
